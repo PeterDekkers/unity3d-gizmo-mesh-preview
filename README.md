@@ -1,4 +1,4 @@
-# Gizmo mesh previews for prefabs in Unity3D
+# Gizmo mesh previews for pooled prefabs in Unity3D
 
 Just a quick script to preview prefabs using gizmo meshes in Unity3D. This is mainly useful if you're using pooled prefabs and want to see a visual representation of them in your scene.
 
