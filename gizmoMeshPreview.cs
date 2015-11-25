@@ -11,13 +11,17 @@ public class gizmoMeshPreview : MonoBehaviour
 	public GameObject prefab;
 	
 	#if UNITY_EDITOR
-	// We'll cache the meshes that we want to draw gizmos for.
-	// If you need to re-draw the gizmos (after your prefab has updated)
-	// you can empty this array in the Inspector.
-	public MeshFilter[] gizmoMeshes = new MeshFilter[0];
-	
 	// You can turn gizmo mesh rendering off via the Inspector, if you want
 	public bool showGizmoMesh = true;
+	
+	// This gets set to 'true' once there are meshes cached.
+	// If you need to redraw the gizmo meshes (e.g. when your prefab changes)
+	// you can simply toggle this checkbox in the inspector and they
+	// will instantly update.
+	public bool gizmoMeshesCached = false;
+	
+	// We'll cache the meshes that we want to draw gizmos for.
+	public MeshFilter[] gizmoMeshes = new MeshFilter[0];
 	
 	// Cache transforms of all the meshes to draw gizmos for
 	private Transform[] gizmoMeshTransforms;
@@ -30,18 +34,21 @@ public class gizmoMeshPreview : MonoBehaviour
 			return;
 		}
 		
-		// Fetch meshes inside the prefab and store them 
-		// and their transforms in an array.
-		if (this.gizmoMeshes.Length == 0) {
-			this.gizmoMeshes = this.prefab.GetComponentsInChildren<MeshFilter> (true);
+		// Fetch meshes inside the prefab once and cache them
+		// and their transforms.
+       		if (!this.gizmoMeshesCached) {
+			this.gizmoMeshes = this.prefab.GetComponentsInChildren<MeshFilter>(true);
 			this.gizmoMeshTransforms = new Transform[this.gizmoMeshes.Length];
 			for (int i = 0; i < this.gizmoMeshes.Length; i++) {
 				this.gizmoMeshTransforms [i] = this.gizmoMeshes [i].GetComponent<Transform> ();
 			}
-		}
+			if (this.gizmoMeshes.Length > 0) {
+            			this.gizmoMeshesCached = true;
+			}
+        	}
 		
 		// If there are meshes in the array, draw a gizmo mesh for each
-		if (this.gizmoMeshes.Length > 0) {
+		if (this.gizmoMeshesCached) {
 			
 			for (int i = 0; i < this.gizmoMeshes.Length; i++) {
 				
